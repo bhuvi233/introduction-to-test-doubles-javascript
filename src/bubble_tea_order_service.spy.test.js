@@ -19,12 +19,19 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('test successful bubble tea order request when using a spy', () => {
+test.each`
+  bubbleTeaType
+  ${'JASMINEMILKTEA'}
+  ${'OOLONGMILKTEA'}
+  ${'MATCHAMILKTEA'}
+  ${'PEACHICETEA'}
+  ${'LYCHEEICETEA'}
+`('test successful for $bubbleTeaType bubble tea order request when using a spy', ({bubbleTeaType}) => {
   // Arrange
   const bubbleTeaRequest = {
     paymentDetails: dummyPaymentDetails,
     bubbleTea: {
-      type: bubbleTeaType.PEACHICETEA,
+      type: bubbleTeaType,
     },
   };
 
@@ -34,6 +41,7 @@ test('test successful bubble tea order request when using a spy', () => {
   // Assert
   expect(orderRequest.name).toBe(dummyPaymentDetails.name);
   expect(orderRequest.digits).toBe(dummyPaymentDetails.debitCard.digits);
+  expect(orderRequest.type).toBe(bubbleTeaType); // verified whether the bubbleTeaType received in createOrderRequest is passed in orderRequest
   expect(emailSpy).toHaveBeenCalledWith(orderRequest);
   expect(emailSpy).toHaveBeenCalledTimes(1);
 });
